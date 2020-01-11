@@ -15,7 +15,7 @@ def send_notify(text):
 
 def main(folder):
     files = glob(f'{folder}/*.mp3')
-    set_term_title(f'Playing {folder}')
+    set_term_title(f'Playing {basename(folder)}')
     try:
         while True:
             file = choice(files)
