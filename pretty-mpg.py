@@ -38,6 +38,6 @@ if __name__ == '__main__':
     parser = ArgumentParser(description='pretty-mpg.py - Shuffle MP3 using mpg123')
     parser._action_groups.pop()
     required_named_args = parser.add_argument_group('required arguments')
-    required_named_args.add_argument('--playlist', help='folder contained MP3 to be shuffled', required=True)
+    required_named_args.add_argument('--playlist', help='folder containing MP3 to be shuffled', required=True)
     args = parser.parse_args()
     main(args.playlist)
