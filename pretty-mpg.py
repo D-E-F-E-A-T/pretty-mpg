@@ -13,9 +13,6 @@ def set_term_title(title):
 def send_notify(text):
     Popen(['notify-send', text]).wait()
 
-def filename(filepath):
-    return basename(filepath)
-
 def main(folder):
     files = glob(f'{folder}/*.mp3')
     set_term_title(f'Playing {folder}')
@@ -23,7 +20,7 @@ def main(folder):
         while True:
             file = choice(files)
             print(f'[+] Playing {file}')
-            send_notify(f'Playing {filename(file)}')
+            send_notify(f'Playing {basename(file)}')
             proc = Popen(['/usr/bin/mpg123', '-q', file], stdout=DEVNULL, stderr=DEVNULL, stdin=PIPE)
             while proc.poll() is None:
                 tuple = select([stdin], [], [], 1)
