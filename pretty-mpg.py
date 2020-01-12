@@ -6,6 +6,8 @@ from random import choice
 from select import select
 from subprocess import Popen, DEVNULL, PIPE
 from sys import stdout, stdin
+from termios import tcsetattr, tcgetattr, TCSADRAIN
+from tty import setcbreak
 
 def set_term_title(title):
     stdout.write(f'\x1b]2;{title}\x07')
@@ -14,8 +16,12 @@ def send_notify(text):
     Popen(['notify-send', text]).wait()
 
 def main(folder):
-    files = glob(f'{folder}/*.mp3')
     set_term_title(f'Playing {basename(folder)}')
+
+    original_settings = tcgetattr(stdin)
+    # set terminal raw mode
+    setcbreak(stdin)
+    files = glob(f'{folder}/*.mp3')
     try:
         while True:
             file = choice(files)
@@ -30,9 +36,14 @@ def main(folder):
                         if cmd == 'n':
                             print('[+] Switching song')
                             proc.kill()
+                        elif cmd == chr(27): #esc
+                            raise KeyboardInterrupt()
     except KeyboardInterrupt:
         print('[+] Quitting')
-
+    finally:
+        tcsetattr(stdin, TCSADRAIN, original_settings)
+        if proc is not None and proc.poll() is None:
+            proc.kill()
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='pretty-mpg.py - Shuffle MP3 using mpg123')
